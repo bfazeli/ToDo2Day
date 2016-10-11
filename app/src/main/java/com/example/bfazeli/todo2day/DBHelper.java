@@ -1,5 +1,6 @@
 package com.example.bfazeli.todo2day;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -39,4 +40,18 @@ class DBHelper extends SQLiteOpenHelper {
         onCreate(database);
     }
 
+    // Create a method to add a brand new task to the database;
+    public void addTask(Task newTask) {
+        // Step 1) Create a reference to our database
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Step 2) Make a key-value pair for each value you want to insert
+        ContentValues values = new ContentValues();
+        values.put(KEY_FIELD_ID, newTask.getId());
+        values.put(FIELD_DESCRIPTION, newTask.getDescription());
+        values.put(FIELD_IS_DONE, newTask.getIsDone());
+
+        // Step 3) insert the values into our database
+        db.insert(DATABASE_TABLE, null, values);
+    }
 }
