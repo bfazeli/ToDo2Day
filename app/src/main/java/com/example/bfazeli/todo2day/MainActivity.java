@@ -2,8 +2,11 @@ package com.example.bfazeli.todo2day;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -28,9 +31,6 @@ public class MainActivity extends AppCompatActivity {
         // Let's make a DBHelper reference:
         database = new DBHelper(this);
 
-        database.addTask(new Task("Studying", 0));
-        database.addTask(new Task("Eating", 0));
-
         // Let's fill the List with all tasks
         taskList = database.getAllTasks();
 
@@ -43,5 +43,45 @@ public class MainActivity extends AppCompatActivity {
 
         // Associate the adapter with the list view
         taskListView.setAdapter(taskListAdapter);
+
+        // Connect the edit text with our layout
+        taskEditText = (EditText) findViewById(R.id.taskEditText);
+    }
+
+    public void addTask(View view) {
+        String description = taskEditText.getText().toString();
+        if (description.isEmpty())
+            Toast.makeText(this, "Task description cannot be empty.", Toast.LENGTH_SHORT).show();
+        else {
+
+            Task newTask = new Task(description, 0); // Let's make a new Task
+            // Let's add the task to the list adapter
+            taskListAdapter.add(newTask);
+            // Let's add the Task to the database
+            database.addTask(newTask);
+
+            taskEditText.setText("");
+        }
+    }
+
+    public void changeTaskStatus(View view)
+    {
+        if (view instanceof CheckBox) {
+            CheckBox selectedCheckBox = (CheckBox) view;
+            Task selectedTask = (Task) selectedCheckBox.getTag();
+            selectedTask.setIsDone(selectedCheckBox.isChecked() ? 1 : 0);
+            // Update the selectedTask in the database
+            database.updateTask(selectedTask);
+        }
+    }
+
+    public void clearAllTasks(View view)
+    {
+        // Clear the List
+        taskList.clear();
+        // Delete all the records (Tasks) in the database
+        database.deleteAllTasks();
+        // Tell the TaskListAdapter to update itself
+        taskListAdapter.notifyDataSetChanged();
     }
 }
