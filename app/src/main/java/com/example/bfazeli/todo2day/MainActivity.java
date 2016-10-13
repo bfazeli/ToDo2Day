@@ -75,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Clears all tasks
+     * @param view the checkbox to
+     */
     public void clearAllTasks(View view)
     {
         // Clear the List
