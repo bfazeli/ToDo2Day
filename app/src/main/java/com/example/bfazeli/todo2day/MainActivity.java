@@ -1,12 +1,21 @@
 package com.example.bfazeli.todo2day;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.EditText;
+import android.widget.ListView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private DBHelper database;
+    private List<Task> taskList;
+    private TaskListAdapter taskListAdapter;
+
+    private EditText taskEditText;
+    private ListView taskListView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,19 +26,22 @@ public class MainActivity extends AppCompatActivity {
         this.deleteDatabase(DBHelper.DATABASE_TABLE);
 
         // Let's make a DBHelper reference:
-        DBHelper db = new DBHelper(this);
+        database = new DBHelper(this);
 
-        // Let's make a new task and add to database:
-        db.addTask(new Task(1, "Study for CS273 Midterm", 0));
-        db.addTask(new Task(2, "Gym", 0));
-        db.addTask(new Task(3, "Eat", 0));
-        db.addTask(new Task(4, "Study", 0));
-        db.addTask(new Task(5, "Talk to special gril", 0));
+        database.addTask(new Task("Studying", 0));
+        database.addTask(new Task("Eating", 0));
 
-        // Let's get all the tasks from database and print them with Log.i()
-        ArrayList<Task> allTasks = db.getAllTasks();
+        // Let's fill the List with all tasks
+        taskList = database.getAllTasks();
 
-        // Loop through each task, print to Log.i
-        for (Task singleTask : allTasks) Log.i("DATABASE TASK", singleTask.toString());
+        // Let's create our custom task list adapter
+        // (We want to associate the adapter with context, the layout and the List)
+        taskListAdapter = new TaskListAdapter(this, R.layout.task_item, taskList);
+
+        // Connect the ListView with our layout
+        taskListView = (ListView) findViewById(R.id.taskListView);
+
+        // Associate the adapter with the list view
+        taskListView.setAdapter(taskListAdapter);
     }
 }
